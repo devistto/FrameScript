@@ -26,7 +26,6 @@ export class TranscodeService {
 
     async extract(filePath: string): Promise<string> {
         const outputPath = path.join(path.dirname(filePath), "audio.wav");
-        console.log(filePath)
 
         return new Promise((resolve, reject) => {
             ffmpeg(filePath)

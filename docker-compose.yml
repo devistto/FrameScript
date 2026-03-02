@@ -3,7 +3,7 @@ services:
   backend:
     build: 
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     container_name: backend
     ports:
       - 8000:8000
@@ -16,7 +16,7 @@ services:
       - 9000
     environment:
       ASR_ENGINE: faster_whisper   
-      ASR_MODEL: base             
+      ASR_MODEL: large-v3             
       ASR_DEVICE: cpu              
       ASR_MODEL_PATH: /models     
     volumes:
