@@ -1,5 +1,4 @@
 # Video Captioner
-___
 
 Video Captioner is a self-hosted API designed to generate unlimited subtitled videos using high-precision speech recognition with Whisper.
 
@@ -8,11 +7,10 @@ Video Captioner is a self-hosted API designed to generate unlimited subtitled vi
 `Upload` → `Validate` → `Extract Audio` → `Generate Subtitles` → `Render Final Video`
 
 ## Features
-___
 - <u>[whisper-webservice](https://github.com/ahmetoner/whisper-asr-webservice)</u>
 
 ## Technologies
-___
+
 - TypeScript
 - Docker / Docker Compose
 - NestJS
@@ -20,7 +18,6 @@ ___
 - FFmpeg / FFprobe
 
 ## Usage
-___
 
 Try the deployed version for a quick demo (limited file size) [here](https://videocaptioner.onrender.com/doc).
 
@@ -41,7 +38,6 @@ Open the local Swagger documentation at:
 http://localhost:8000/doc
 
 ### Environment variables
-___
 
 - `ASR_ENGINE`: Engine selection (openai_whisper, faster_whisper, whisperx)
 - `ASR_MODEL`: Model selection (tiny, base, small, medium, large-v3, etc.)
