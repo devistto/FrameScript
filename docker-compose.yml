@@ -7,17 +7,14 @@ services:
     container_name: backend
     ports:
       - 8000:8000
-  whisper-asr:
     depends_on:
-      - backend
+    - whisper-asr
+  whisper-asr:
+    env_file:
+      - ./.env
     image: onerahmet/openai-whisper-asr-webservice:latest
     container_name: whisper-asr
     expose:
       - 9000
-    environment:
-      ASR_ENGINE: faster_whisper   
-      ASR_MODEL: large-v3             
-      ASR_DEVICE: cpu              
-      ASR_MODEL_PATH: /models     
     volumes:
       - ./models:/models             

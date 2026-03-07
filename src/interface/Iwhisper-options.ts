@@ -1,6 +1,11 @@
-import { WhisperLanguage } from "src/dto/whisper-options.dto";
+import { WhisperLanguage, WhisperTask } from "src/dto/whisper-options.dto";
 
-export interface IWhisperOptions {
-    task: "translate" | "transcribe";
+interface IWhisperOptions {
+    task: WhisperTask
     audio_language: WhisperLanguage;
+}
+
+export interface ParamOptions {
+    filePth: string,
+    options: IWhisperOptions
 }

@@ -5,18 +5,36 @@ import fs from "node:fs"
 import { customAlphabet } from "nanoid"
 import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz123456789", 10);
+
+const allowedMimeTypes = [
+    "video/mp4",
+    "video/mpeg",
+    "video/quicktime",
+    "video/mov",
+    "video/wmv",
+    "video/avi",
+    "video/x-msvideo",
+    "video/webm",
+    "video/ogg",
+    "video/x-flv",
+    "video/3gpp",
+    "video/3gpp2",
+    "video/x-matroska",
+];
+
 export const multerOptions: MulterOptions = {
     storage: diskStorage({
         destination(req, file, callback) {
             const base = path.join(process.cwd(), "temp");
-            const fileFolder = customAlphabet("abcdefghijklmnopqrstuvwxyz123456789", 10);
-            const filePath = path.join(base, fileFolder());
+            const filePath = path.join(base, nanoid());
 
-            if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
-            return callback(null, filePath)
+            fs.mkdirSync(filePath, { recursive: true });
+
+            callback(null, filePath)
         },
         filename(req, file, callback) {
-            return callback(null, file.originalname)
+            callback(null, file.originalname)
         },
     }),
     limits: {
@@ -24,16 +42,13 @@ export const multerOptions: MulterOptions = {
     },
 
     fileFilter(req, file, callback) {
-        const mimetypes = [
-            "video/mp4", "video/mpeg", "video/quicktime", "video/mov", "video/wmv", "video/avi",
-            "video/x-msvideo", "video/webm", "video/ogg", "video/x-flv", "video/3gpp", "video/3gpp2",
-            "video/x-matroska"
-        ];
-
-        if (!mimetypes.includes(file.mimetype)) {
-            return callback(new BadRequestException(`Acceptable mimetypes incluede ${mimetypes}`), false)
+        if (!allowedMimeTypes.includes(file.mimetype)) {
+            callback(
+                new BadRequestException(`Acceptable mimetypes incluede ${allowedMimeTypes}`),
+                false
+            )
         };
 
-        return callback(null, true)
+        callback(null, true)
     }
 } 

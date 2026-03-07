@@ -1,62 +1,63 @@
 import "dotenv/config";
 import { readFile } from "fs/promises";
-import { IWhisperOptions } from "src/interface/Iwhisper-options";
+import { ParamOptions } from "src/interface/Iwhisper-options";
 import OpenAI from "openai";
 import fs from 'node:fs';
+import { URLSearchParams } from "node:url";
+
+type WhisperAproach = "open_source" | "official"
 
 export class WhisperService {
-    async whisperCall(audioPath: string, options: IWhisperOptions) {
-        let content = "";
+    private instance = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+    private readonly HOW_WHISPER = process.env.WHISPER_APROACH as WhisperAproach
 
-        try {
-            content = await this.openai(audioPath, options) as string
-        } catch (err) {
-            console.log(err);
-            content = await this.openSource(audioPath, options);
-        }
-
-        return content;
+    async call(data: ParamOptions): Promise<string> {
+        return this.HOW_WHISPER === "open_source"
+            ? await this.openSource(data)
+            : await this.openai(data)
     }
 
-    private async openSource(audioPath: string, options: IWhisperOptions) {
-        const baseUrl = "http://whisper-asr:9000/asr?";
-        const queryParams = `task=${options.task}&language=${options.audio_language}&output=srt`;
-        const url = baseUrl + queryParams;
+    private async openai(data: ParamOptions): Promise<string> {
+        const file = fs.createReadStream(data.filePth);
 
-        const buffer = await readFile(audioPath);
-        const blob = new Blob([buffer], { type: "audio/wav" });
+        if (data.options.task === "translate") {
+            const res = await this.instance.audio.translations.create({
+                file,
+                model: "whisper-1",
+                response_format: "srt"
+            });
+            return String(res);
+        }
+
+        const res = await this.instance.audio.transcriptions.create({
+            file,
+            model: "whisper-1",
+            response_format: "srt",
+            language: data.options.audio_language
+        });
+
+        return res;
+    }
+
+    // fallbck
+    private async openSource(data: ParamOptions) {
+        const baseUrl = "http://whisper-asr:9000/asr";
+        const params = new URLSearchParams({
+            task: data.options.task,
+            language: data.options.audio_language,
+            output: "srt",
+        });
+
+        const buffer = await readFile(data.filePth);
+
         const formData = new FormData();
-        formData.append("audio_file", blob, "audio.wav");
+        formData.append("audio_file", new Blob([buffer], { type: "audio/wav" }), "audio.wav");
 
-        const response = await fetch(url, {
+        const res = await fetch(`${baseUrl}?${params}`, {
             method: "POST",
             body: formData,
         });
 
-        return await response.text();
-    }
-
-    private async openai(audioPath: string, options: IWhisperOptions) {
-        if (!process.env.OPENAI_KEY) console.log("OPENAI_KEY not found");
-
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
-
-        if (options.task === "translate") {
-            const translation = await openai.audio.translations.create({
-                file: fs.createReadStream(audioPath),
-                model: "whisper-1",
-                response_format: "srt"
-            });
-            return translation;
-        }
-
-        const transcription = await openai.audio.transcriptions.create({
-            file: fs.createReadStream(audioPath),
-            model: "whisper-1",
-            response_format: "srt",
-            language: options.audio_language
-        });
-
-        return transcription;
+        return await res.text();
     }
 }

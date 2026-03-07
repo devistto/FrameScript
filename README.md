@@ -1,33 +1,53 @@
 # Video Captioner
 ___
-A self-hosted HTTP API for video captioning.
-> Upload → Validate → Extract Audio → Generate Subtitles → Render Final Video 
 
-[Click here](http://example.com) to try an available online version.
+Video Captioner is a self-hosted API designed to generate unlimited subtitled videos using high-precision speech recognition with Whisper.
 
-### Technologies
+### Pipeline
+
+`Upload` → `Validate` → `Extract Audio` → `Generate Subtitles` → `Render Final Video`
+
+## Features
+___
+- <u>[whisper-webservice](https://github.com/ahmetoner/whisper-asr-webservice)</u>
+
+## Technologies
 ___
 - TypeScript
-- Docker & Docker compose
-- Nestjs
-- FFmpeg & FFprobe
-- Whisper (ASR engine)
+- Docker / Docker Compose
+- NestJS
+- Node.js
+- FFmpeg / FFprobe
 
-### Quick usage
+## Usage
 ___
-Prerequisite: Docker installed and running.
+
+Try the deployed version for a quick demo (limited file size) [here](https://videocaptioner.onrender.com/doc).
+
+### Set up
+
+**NOTE:** Docker must be installed and running.
+
+1 - Clone the repository
+```bash
+git clone https://github.com/devistto/VideoCaptioner.git
+cd VideoCaptioner
 ```
-git clone https://github.com/devistto/VideoCaptioner && \
-cd AutoCaption-api && \
+2 - Once inside the repository directory
+```bash
 docker compose up --build
 ```
-
-Swagger documentation [http://localhost:8000/doc](http://localhost:8000/doc)
+Open the local Swagger documentation at:
+http://localhost:8000/doc
 
 ### Environment variables
 ___
+
 - `ASR_ENGINE`: Engine selection (openai_whisper, faster_whisper, whisperx)
 - `ASR_MODEL`: Model selection (tiny, base, small, medium, large-v3, etc.)
 - `ASR_MODEL_PATH`: Custom path to store/load models
 - `ASR_DEVICE`: Device selection (cuda, cpu)
 - `MODEL_IDLE_TIMEOUT`: Timeout for model unloading
+- `PORT`: Server port to listen on
+- `WHISPER_APPROACH`: Approach selection (open_source, official)
+- `OPENAI_KEY`: Required if `WHISPER_APPROACH=official`

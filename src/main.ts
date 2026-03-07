@@ -1,33 +1,34 @@
-import "dotenv/config"
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from "./module/app.module"
+import { AppModule } from './module/app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const validationOptionsObj = {
-    whitelist: true,
-    transform: true,
-    stopAtFirstError: true
-  }
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      stopAtFirstError: true,
+    })
+  );
 
   const config = new DocumentBuilder()
-    .setTitle('AutoCaption API')
-    .setDescription(`
-    API for automatic video captioning.
-
-    after reveiving a video file, its audio is transcribes using Whisper, generates subtitles,
-    embeds them into the video, and returns the processed MP4 file.
-    All processing is done in a Dockerized environment with automatic cleanup.
-`).setVersion('1.0')
+    .setTitle('Video Captioner API')
+    .setDescription(
+      `Video Captioner is a self-hosted API designed to generate unlimited subtitled videos using high-precision speech recognition with Whisper.`
+    )
+    .setVersion('1.2')
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('doc', app, documentFactory);
 
-  app.useGlobalPipes(new ValidationPipe(validationOptionsObj))
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('doc', app, document);
 
-  await app.listen(process.env.PORT ?? 8000, () => console.log("Swegger UI on http://localhost:8000/doc"));
+  const PORT = process.env.PORT!;
+  await app.listen(PORT, () =>
+    console.log(`Swagger UI on http://localhost:${PORT}/doc`)
+  );
 }
+
 bootstrap();

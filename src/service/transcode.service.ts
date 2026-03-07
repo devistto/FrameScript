@@ -6,20 +6,20 @@ import ffmpeg from "src/utils/ffmpeg-config";
 @Injectable()
 export class TranscodeService {
 
-    validate(filePath: string) {
+    validate(filePath: string): Promise<void> {
         return new Promise((resolve, reject) => {
             ffmpeg.ffprobe(filePath, (err, metadata) => {
                 if (err) {
                     return reject(new BadRequestException("Unable to read media metadata"));
                 }
 
-                const hasValidStream = metadata.streams?.find(stream => stream.codec_type == "video");
+                const hasValidStream = metadata.streams?.find(stream => stream.codec_type === "video");
 
                 if (!hasValidStream) {
                     return reject(new BadRequestException("Unable to validate file properities"))
                 }
 
-                return resolve(true)
+                return resolve()
             });
         })
     }
@@ -43,15 +43,14 @@ export class TranscodeService {
         })
     }
 
-    async burn(filePath: string, content: string) {
+    async burn(filePath: string, content: string): Promise<string> {
         const dir = path.dirname(filePath);
-        const contentPath = `${dir}/subs.srt`;
+        const contentPath = path.join(dir, "x.srt");
 
         fs.writeFileSync(contentPath, content, { encoding: "utf8" });
 
-        const outputPath = path.join(path.dirname(filePath), "output.mp4");
-
-        const normalizedSrtPath = contentPath.replace(/\\/g, "/");
+        const outputPath = path.join(dir, "output.mp4");
+        const normalizedSrtPath = contentPath.split(path.sep).join("/");
 
         return new Promise((resolve, reject) => {
             ffmpeg(filePath)

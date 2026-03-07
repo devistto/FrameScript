@@ -1,21 +1,18 @@
-import { Body, Controller, Post, StreamableFile, UploadedFile, UseInterceptors } from "@nestjs/common";
-import { multerOptions } from "src/utils/multer-options";
-import { FileInterceptor } from "@nestjs/platform-express"
-import { VideoService } from "src/service/video.service";
-import { WhisperLanguage, WhisperOptionsDto } from "src/dto/whisper-options.dto";
-import { createReadStream } from "fs";
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { CleanUpInterceptor } from "src/interceptor/clean-up.interceptor";
+import { Body, Controller, Post, StreamableFile, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { multerOptions } from 'src/utils/multer-options';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { VideoService } from 'src/service/video.service';
+import { WhisperLanguage, WhisperOptionsDto } from 'src/dto/whisper-options.dto';
+import { createReadStream } from 'fs';
+import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CleanUpInterceptor } from 'src/interceptor/clean-up.interceptor';
 
 @Controller('videos')
 export class VideoController {
-    constructor(private videoService: VideoService) { }
+    constructor(private readonly videoService: VideoService) { }
 
     @Post()
-    @UseInterceptors(
-        FileInterceptor('video', multerOptions),
-        CleanUpInterceptor
-    )
+    @UseInterceptors(FileInterceptor('video', multerOptions), CleanUpInterceptor)
     @ApiConsumes('multipart/form-data')
     @ApiOperation({
         summary: 'Create a subtitled video',
@@ -28,30 +25,30 @@ export class VideoController {
                 video: {
                     type: 'string',
                     format: 'binary',
-                    description: "A 100MB video file - Supported formats: MP4, MPEG, QuickTime, WMV, AVI, WebM, Ogg, FLV, 3GPP, 3GPP2",
+                    description: 'At most 100MB video file - Supports MP4, MPEG, QuickTime, WMV, AVI, WebM, Ogg, FLV, 3GPP, 3GPP2 formats'
                 },
                 task: {
-                    type: "string",
-                    enum: ["translate", "transcribe"],
-                    default: "transcribe"
+                    type: 'string',
+                    enum: ['translate', 'transcribe'],
+                    default: 'transcribe'
                 },
                 audio_language: {
-                    type: "string",
+                    type: 'string',
                     enum: Object.values(WhisperLanguage),
                     default: WhisperLanguage.English
                 }
             },
-            required: ["task", 'video', "audio_language"]
+            required: ['task', 'video', 'audio_language']
         }
     })
     @ApiResponse({
         status: 201,
+        description: 'Returns a processed video with embedded subtitles.',
         content: {
             'video/mp4': {
                 schema: { type: 'string', format: 'binary' }
             }
-        },
-        description: 'Returns a processed video with embedded subtitles.'
+        }
     })
     @ApiBadRequestResponse({
         description: 'Invalid request: missing file, exceeded file size / duration limit or else.',
@@ -69,18 +66,22 @@ export class VideoController {
         schema: {
             example: {
                 statusCode: 500,
-                message: "Something went wrong while processing file",
+                message: 'Something went wrong while processing file',
                 error: 'Internal Server Error'
             }
         }
     })
-    async create(@UploadedFile() file: Express.Multer.File, @Body() dto: WhisperOptionsDto): Promise<StreamableFile> {
-        const videoPath = await this.videoService.create(file.path, dto);
-        const stream = createReadStream(videoPath);
+    async create(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() dto: WhisperOptionsDto
+    ): Promise<StreamableFile> {
+        const videoPath = await this.videoService.create({ filePth: file.path, options: dto });
 
-        return new StreamableFile(stream, {
-            type: 'video/mp4',
-            disposition: `attachment; filename="${file.originalname}"`,
-        });
+        return new StreamableFile(
+            createReadStream(videoPath),
+            {
+                type: 'video/mp4',
+                disposition: `attachment; filename="${file.originalname}"`,
+            });
     }
 }

@@ -1,22 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { TranscodeService } from "./transcode.service";
 import { WhisperService } from "src/service/whisper.service";
-import { IWhisperOptions } from "src/interface/Iwhisper-options";
+import { ParamOptions } from "src/interface/Iwhisper-options";
 
 @Injectable()
 export class VideoService {
     constructor(
-        private transcodeService: TranscodeService,
-        private whisperService: WhisperService
+        private readonly transcodeService: TranscodeService,
+        private readonly whisperService: WhisperService
     ) { }
 
-    async create(filePath: string, options: IWhisperOptions) {
-        await this.transcodeService.validate(filePath);
-        const audioPath = await this.transcodeService.extract(filePath);
+    async create(data: ParamOptions) {
+        await this.transcodeService.validate(data.filePth);
+        const audioPath = await this.transcodeService.extract(data.filePth);
 
-        const content = await this.whisperService.whisperCall(audioPath, options);
+        const content = await this.whisperService.call({ filePth: audioPath, options: data.options });
 
-        const videoPath = await this.transcodeService.burn(filePath, content) as string;
-        return videoPath
+        return await this.transcodeService.burn(data.filePth, content)
     }
 }
