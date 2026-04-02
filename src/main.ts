@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './module/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,9 +25,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);
 
-  const PORT = process.env.PORT!;
-  await app.listen(PORT, () =>
-    console.log(`Swagger UI on http://localhost:${PORT}/doc`)
+  await app.listen(8000, () =>
+    console.log(`Swagger UI on http://localhost:8000/doc`)
   );
 }
 
