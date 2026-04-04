@@ -34,8 +34,6 @@ cd VideoCaptioner
 ```bash
 docker compose up --build
 ```
-Open the local Swagger documentation at:
-http://localhost:8000/doc
 
 ### Environment variables
 
