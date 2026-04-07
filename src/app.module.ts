@@ -5,6 +5,8 @@ import { TranscriptionService } from "./service/transcription.service";
 import { SubtitleMediaService } from "./service/subtitle-media.service";
 import { BullModule } from "@nestjs/bullmq";
 import { JobConsumerService } from "./service/job-consumer.service";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
     imports: [
@@ -16,6 +18,9 @@ import { JobConsumerService } from "./service/job-consumer.service";
         }),
         BullModule.registerQueue({
             name: "video"
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, "..", "public")
         })
     ],
     controllers: [SubtitlingController],

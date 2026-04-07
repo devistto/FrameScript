@@ -12,12 +12,13 @@ export class JobConsumerService extends WorkerHost {
         super()
     }
 
-    async process({ data }: Job): Promise<any> {
-        const audioPath = await this.subtitleMediaService.extractAudio(data.videoPath);
-        const transcription = await this.transcriptionService.generate(audioPath, data);
+    async process(job: Job): Promise<any> {
+        const audioPath = await this.subtitleMediaService.extractAudio(job.data.videoPath);
 
+        const transcription = await this.transcriptionService.generate(audioPath, job.data);
+        
         const outputPath = await this.subtitleMediaService.burnSubtitles(
-            data.videoPath, transcription
+            job.data.videoPath, transcription
         );
 
         return { outputPath }

@@ -8,10 +8,12 @@ export class SubtitlingService {
     constructor(@InjectQueue("video") private videoQueue: Queue) { }
 
     async enqueue(videoPath: string, dto: TranscriptionDataDto) {
-        await this.videoQueue.add("trnscode", { ...dto, videoPath }, {
+        await this.videoQueue.add("transcode", { ...dto, videoPath }, {
             attempts: 3,
             removeOnFail: true,
-            removeOnComplete: true
+            removeOnComplete: {
+                age: 10
+            }
         })
     }
 }
