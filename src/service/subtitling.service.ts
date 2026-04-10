@@ -8,12 +8,14 @@ export class SubtitlingService {
     constructor(@InjectQueue("video") private videoQueue: Queue) { }
 
     async enqueue(videoPath: string, dto: TranscriptionDataDto) {
-        await this.videoQueue.add("transcode", { ...dto, videoPath }, {
+        const job = await this.videoQueue.add("transcode", { ...dto, videoPath }, {
             attempts: 3,
             removeOnFail: true,
             removeOnComplete: {
                 age: 10
             }
         })
+
+        return job.id
     }
 }

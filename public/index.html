@@ -14,7 +14,7 @@
 
         <div class="row file-row">
             <input type="text" placeholder="Nenhum arquivo selecionado" disabled>
-            <input type="file">
+            <input type="file" id="video">
         </div>
 
         <div class="row">
@@ -96,17 +96,12 @@
 
         <button class="submit-btn">Enviar</button>
 
-        <div class="jobs">
-
-            <div class="job-card">
-                <span>video.mp4</span>
-                <span>0%</span>
-                <button class="cancel-btn">Cancel</button>
-            </div>
-
-        </div>
+        <div class="jobs"></div>
     </div>
 
 </body>
+
+<script src="/socket.io.min.js"></script>
+<script src="/script.js"></script>
 
 </html>

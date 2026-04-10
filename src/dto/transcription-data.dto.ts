@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer";
 import { IsBoolean, IsEnum, IsIn, IsOptional, IsString } from "class-validator";
 
 export enum WhisperLanguage {
@@ -21,6 +22,7 @@ export class TranscriptionDataDto {
     lang?: WhisperLanguage
 
     @IsOptional()
+    @Transform(({ value }) => value === 'true')
     @IsBoolean()
     translate?: boolean
 
@@ -29,6 +31,7 @@ export class TranscriptionDataDto {
     initial_prompt?: string
 
     @IsOptional()
+    @Transform(({ value }) => value === 'true')
     @IsBoolean()
     vad_filter?: boolean
 }

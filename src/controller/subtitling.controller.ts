@@ -11,7 +11,7 @@ export class SubtitlingController {
     @Post("subtitles")
     @UseInterceptors(FileInterceptor('video', multerOptions))
     async generate(@UploadedFile() file: Express.Multer.File, @Body() dto: TranscriptionDataDto) {
-        await this.SubtitlingService.enqueue(file.path, dto);
-        return { status: "queued" };
+        const jobId = await this.SubtitlingService.enqueue(file.path, dto);
+        return { jobId, status: "queued" };
     }
 }

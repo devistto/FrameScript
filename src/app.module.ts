@@ -7,6 +7,7 @@ import { BullModule } from "@nestjs/bullmq";
 import { JobConsumerService } from "./service/job-consumer.service";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { SocketEventService } from "./service/socket-event.service";
 
 @Module({
     imports: [
@@ -26,7 +27,8 @@ import { join } from "path";
     controllers: [SubtitlingController],
     providers: [
         SubtitlingService, TranscriptionService, 
-        SubtitleMediaService, JobConsumerService
+        SubtitleMediaService, JobConsumerService,
+        SocketEventService
     ]
 })
 export class AppModule { }
