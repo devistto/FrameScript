@@ -97,7 +97,7 @@ textarea {
   left: 0;
   height: 10%;
   width: 0%;
-  background: #0b71c4;
+  background: #007bff;
   z-index: 0;
   transition: width 0.3s ease;
 }
@@ -108,7 +108,8 @@ textarea {
   z-index: 1;
 }
 
-.cancel-btn {
+.cancel-btn,
+.save-btn {
   color: rgb(0, 0, 0);
   background-color: white;
   border: none;
@@ -119,6 +120,7 @@ textarea {
   z-index: 1;
 }
 
-.cancel-btn:hover {
-  color:rgb(160, 0, 0)
+.cancel-btn:hover,
+.save-btn:hover {
+  color: rgb(160, 0, 0)
 }

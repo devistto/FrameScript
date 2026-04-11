@@ -1,13 +1,12 @@
 import { Module } from "@nestjs/common";
-import { SubtitlingController } from "./controller/subtitling.controller";
-import { SubtitlingService } from "./service/subtitling.service";
-import { TranscriptionService } from "./service/transcription.service";
-import { SubtitleMediaService } from "./service/subtitle-media.service";
+import { VideoController } from "./controller/video.controller";
+import { VideoService } from "./service/video.service";
+import { TranscodeService } from "./service/transcode.service";
 import { BullModule } from "@nestjs/bullmq";
-import { JobConsumerService } from "./service/job-consumer.service";
+import { ConsumerService } from "./service/consumer.service";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
-import { SocketEventService } from "./service/socket-event.service";
+import { WebsocketService } from "./service/websocket.service";
 
 @Module({
     imports: [
@@ -24,11 +23,13 @@ import { SocketEventService } from "./service/socket-event.service";
             rootPath: join(__dirname, "..", "public")
         })
     ],
-    controllers: [SubtitlingController],
+    controllers: [VideoController],
     providers: [
-        SubtitlingService, TranscriptionService, 
-        SubtitleMediaService, JobConsumerService,
-        SocketEventService
+        VideoService,
+        TranscodeService,
+        ConsumerService,
+        WebsocketService
     ]
 })
+
 export class AppModule { }

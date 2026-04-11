@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import path from "path";
 import fs from "node:fs"
-import ffmpeg from "src/utils/ffmpeg-config";
+import ffmpeg from "src/config/ffmpeg-config";
 
 @Injectable()
-export class SubtitleMediaService {
+export class TranscodeService {
     private ensureVideoFile(videoPath: string): Promise<void> {
         return new Promise((resolve, reject) => {
             ffmpeg.ffprobe(videoPath, (err, metadata) => {

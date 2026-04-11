@@ -10,7 +10,7 @@ const baseUrl = "http://localhost:8000";
 
 fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
-    fileNameInput.value = file ? file.name : 'Nenhum arquivo selecionado';
+    fileNameInput.value = file ? file.name : 'No file selected.';
 });
 
 submitBtn.addEventListener('click', async () => {
@@ -49,7 +49,7 @@ submitBtn.addEventListener('click', async () => {
 
     } catch (err) {
         console.error(err);
-        alert('Erro ao enviar');
+        alert('Faield. Couldn`t send form.');
     }
 });
 
@@ -110,6 +110,29 @@ function updateJobProgress(id, progress) {
     if (progress === 100) {
         state.current = 100;
         progressEl.textContent = `100%`;
+
+        const btn = job.querySelector('.cancel-btn');
+
+        if (btn) {
+            btn.textContent = 'Save';
+            btn.classList.remove('cancel-btn');
+            btn.classList.add('save-btn');
+
+            btn.dataset.disabled = "false";
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+            btn.style.pointerEvents = "auto";
+
+            const newBtn = btn.cloneNode(true);
+            btn.replaceWith(newBtn);
+
+            newBtn.addEventListener('click', () => {
+                window.open(`${baseUrl}/videos/jobs/${id}`);
+
+                job.remove();
+            });
+        }
+
         return;
     }
 
@@ -122,7 +145,7 @@ function updateJobProgress(id, progress) {
         state.current++;
         progressEl.textContent = `${state.current}%`;
         bar.style.width = `${state.current}%`;
-    }, 300);
+    }, 350);
 
     progressEl.textContent = `${state.current}%`;
 
@@ -141,7 +164,6 @@ const socket = io(baseUrl);
 socket.on("connect", () =>
     console.log("Connection stablished.")
 );
-
-socket.on('update', (data) => {
+socket.on('progress', (data) => {
     updateJobProgress(data.id, data.progress)
 })

@@ -4,7 +4,7 @@ import { Queue } from "bullmq";
 import { InjectQueue } from "@nestjs/bullmq";
 
 @Injectable()
-export class SubtitlingService {
+export class VideoService {
     constructor(@InjectQueue("video") private videoQueue: Queue) { }
 
     async enqueue(videoPath: string, dto: TranscriptionDataDto) {
@@ -35,5 +35,10 @@ export class SubtitlingService {
                 cancelled: true
             });
         };
+    }
+
+    async findComplete(id: string) {
+        const job = await this.videoQueue.getJob(id);
+        return job?.returnvalue.outputPath;
     }
 }

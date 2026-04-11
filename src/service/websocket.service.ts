@@ -3,16 +3,16 @@ import { JobProgress } from "bullmq";
 import { Server } from "socket.io";
 
 type JobUpdateData = {
-    id: number;
-    progress: JobProgress;
+    id: string; 
+    progress: JobProgress
 }
 
 @WebSocketGateway()
-export class SocketEventService {
+export class WebsocketService {
     @WebSocketServer()
-    io!: Server
+    private io!: Server
 
-    sendUpdate(data: JobUpdateData) {
-        this.io.emit("update", (data))
+    progress(data: JobUpdateData) {
+        this.io.emit("progress", (data))
     }
 }

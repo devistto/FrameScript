@@ -17,9 +17,9 @@ services:
   whisper-asr:
     environment:
       - ASR_ENGINE=faster_whisper
-      - ASR_MODEL=turbo
+      - ASR_MODEL=large-v3
       - ASR_DEVICE=cpu
-      - ASR_MODEL_PATH=./models
+      - ASR_MODEL_PATH=/models
     image: onerahmet/openai-whisper-asr-webservice:latest
     container_name: whisper-asr
     ports:
