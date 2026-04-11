@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { multerOptions } from 'src/utils/multer-options';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TranscriptionDataDto } from 'src/dto/transcription-data.dto';
@@ -13,5 +13,10 @@ export class SubtitlingController {
     async generate(@UploadedFile() file: Express.Multer.File, @Body() dto: TranscriptionDataDto) {
         const jobId = await this.SubtitlingService.enqueue(file.path, dto);
         return { jobId, status: "queued" };
+    }
+
+    @Delete('jobs/:id')
+    async cancel(@Param('id') id: string) {
+        await this.SubtitlingService.cancel(id);
     }
 }

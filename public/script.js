@@ -6,6 +6,8 @@ const textarea = document.querySelector('textarea');
 const submitBtn = document.querySelector('.submit-btn');
 const jobsContainer = document.querySelector('.jobs');
 
+const baseUrl = "http://localhost:8000";
+
 fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
     fileNameInput.value = file ? file.name : 'Nenhum arquivo selecionado';
@@ -33,7 +35,7 @@ submitBtn.addEventListener('click', async () => {
 
     try {
 
-        const res = await fetch('http://localhost:8000/videos/subtitles', {
+        const res = await fetch(`${baseUrl}/videos/subtitles`, {
             method: 'POST',
             body: formData
         });
@@ -57,13 +59,16 @@ function createJob({ id, name }) {
     job.dataset.id = id;
 
     job.innerHTML = `
+        <div class="progress-bar"></div>
         <span>${name.length > 30 ? name.slice(0, 30) + "..." : name}</span>
         <span class="progress">0%</span>
-        <button class="cancel-btn">Cancel</button>
+        <button class="cancel-btn">cancel</button>
     `;
 
-    job.querySelector('.cancel-btn').addEventListener('click', async () => {
-        await fetch(`http://localhost:8000/videos/jobs/${id}`, {
+    job.querySelector('.cancel-btn').addEventListener('click', async (e) => {
+        if (e.target.dataset.disabled === "true") return;
+
+        await fetch(`${baseUrl}/videos/jobs/${id}`, {
             method: 'DELETE'
         });
 
@@ -77,6 +82,8 @@ const jobs = {};
 
 function updateJobProgress(id, progress) {
     const job = document.querySelector(`.job-card[data-id="${id}"]`);
+    const bar = job.querySelector('.progress-bar');
+
     if (!job) return;
 
     const progressEl = job.querySelector('.progress');
@@ -93,9 +100,10 @@ function updateJobProgress(id, progress) {
     if (state.current < progress) state.current = progress;
 
     let target;
-    if (progress === 10) target = 49;
-    else if (progress === 50) target = 99;
-    else target = 100;
+
+    const map = { 0: 9, 10: 49, 50: 99 };
+
+    target = map[progress] ?? 100;
 
     if (state.interval) clearInterval(state.interval);
 
@@ -113,12 +121,22 @@ function updateJobProgress(id, progress) {
 
         state.current++;
         progressEl.textContent = `${state.current}%`;
+        bar.style.width = `${state.current}%`;
     }, 300);
 
     progressEl.textContent = `${state.current}%`;
+
+    if (progress >= 50) {
+        const btn = job.querySelector('.cancel-btn');
+
+        btn.style.opacity = "0.6";
+        btn.style.cursor = "none";
+        btn.style.pointerEvents = "none";
+        btn.dataset.disabled = "true";
+    }
 }
 
-const socket = io("http://localhost:8000");
+const socket = io(baseUrl);
 
 socket.on("connect", () =>
     console.log("Connection stablished.")

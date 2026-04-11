@@ -18,4 +18,22 @@ export class SubtitlingService {
 
         return job.id
     }
+
+    async cancel(id: string) {
+        const job = await this.videoQueue.getJob(id);
+
+        if (job) {
+            const state = await job.getState();
+
+            if (state !== "active") {
+                await job.remove();
+                return;
+            }
+
+            await job.updateData({
+                ...job.data,
+                cancelled: true
+            });
+        };
+    }
 }

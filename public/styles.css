@@ -17,7 +17,7 @@ body {
   padding: 20px;
   border-radius: 12px;
   width: 380px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -53,7 +53,9 @@ textarea {
   height: 70px;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   padding: 7px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -81,26 +83,42 @@ input, select, textarea {
 }
 
 .job-card {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  font-size: 14px;
+  padding: 6px 0px;
+  font-size: 13px;
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 10%;
+  width: 0%;
+  background: #0b71c4;
+  z-index: 0;
+  transition: width 0.3s ease;
+}
+
+.job-card span,
+.job-card button {
+  position: relative;
+  z-index: 1;
 }
 
 .cancel-btn {
-  background: #dc3545;
-  color: white;
+  color: rgb(0, 0, 0);
+  background-color: white;
   border: none;
   padding: 4px 8px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
+  z-index: 1;
 }
 
 .cancel-btn:hover {
-  background: #a71d2a;
+  color:rgb(160, 0, 0)
 }
