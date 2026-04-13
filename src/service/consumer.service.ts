@@ -3,13 +3,15 @@ import { Job, Queue } from "bullmq";
 import { TranscodeService } from "./transcode.service";
 import { WebsocketService } from "./websocket.service";
 import createTranscription from "src/config/transcription";
+import { FileLifeCycleService } from "./file-life-cycle.service";
 
 @Processor("video", { concurrency: 3 })
 export class ConsumerService extends WorkerHost {
     constructor(
         @InjectQueue("video") private videoQueue: Queue,
         private transcode: TranscodeService,
-        private websocket: WebsocketService
+        private websocket: WebsocketService,
+        private fileService: FileLifeCycleService
     ) {
         super()
     }
@@ -23,7 +25,10 @@ export class ConsumerService extends WorkerHost {
 
         const activeJob = await this.videoQueue.getJob(job.id!)
 
-        if (activeJob?.data?.cancelled) return;
+        if (activeJob?.data?.cancelled) {
+            await this.fileService.cleanup(job.id!);
+            return;
+        };
 
         await job.updateProgress(50)
         const outputPath = await this.transcode.burnSubtitles(

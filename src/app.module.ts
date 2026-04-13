@@ -7,6 +7,8 @@ import { ConsumerService } from "./service/consumer.service";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { WebsocketService } from "./service/websocket.service";
+import { FileLifeCycleService } from "./service/file-life-cycle.service";
+import { AppService } from "./app.service";
 
 @Module({
     imports: [
@@ -25,10 +27,8 @@ import { WebsocketService } from "./service/websocket.service";
     ],
     controllers: [VideoController],
     providers: [
-        VideoService,
-        TranscodeService,
-        ConsumerService,
-        WebsocketService
+        VideoService, TranscodeService, ConsumerService,
+        WebsocketService, FileLifeCycleService, AppService
     ]
 })
 

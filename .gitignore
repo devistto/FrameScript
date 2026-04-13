@@ -1,6 +1,6 @@
 node_modules
 models
-temp
+tmp
 .env
 dist/
 socket.io.min.js

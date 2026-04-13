@@ -23,7 +23,7 @@ const allowedMimeTypes = [
 export const multerOptions: MulterOptions = {
     storage: diskStorage({
         destination(req, file, callback) {
-            const base = path.join(process.cwd(), "temp");
+            const base = path.join(process.cwd(), "tmp");
             const filePath = path.join(base, nanoid());
 
             fs.mkdirSync(filePath, { recursive: true });
