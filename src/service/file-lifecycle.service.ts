@@ -3,15 +3,15 @@ import fs from 'node:fs'
 import path from "node:path";
 
 @Injectable()
-export class FileLifeCycleService {
+export class FileLifecycleService {
     private files = new Map<string, string>();
 
-    register(id: string, filePath: string) {
+    insert(id: string, filePath: string) {
         const folderPath = path.dirname(filePath);
         this.files.set(id, folderPath)
     }
 
-    async cleanup(id: string) {
+    async delete(id: string) {
         const dir = this.files.get(id);
 
         if (!dir) return;

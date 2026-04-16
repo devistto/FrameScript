@@ -2,25 +2,23 @@ import { BadRequestException, Injectable, NotAcceptableException } from "@nestjs
 import { TranscriptionDataDto } from "src/dto/transcription-data.dto";
 import { Queue } from "bullmq";
 import { InjectQueue } from "@nestjs/bullmq";
-import { FileLifeCycleService } from "./file-life-cycle.service";
+import { FileLifecycleService } from "./file-lifecycle.service";
 
 @Injectable()
 export class VideoService {
     constructor(
         @InjectQueue("video") private videoQueue: Queue,
-        private fileService: FileLifeCycleService
+        private fileLifecycle: FileLifecycleService
     ) { }
 
     async enqueue(videoPath: string, dto: TranscriptionDataDto) {
         const job = await this.videoQueue.add("transcode", { ...dto, videoPath }, {
             attempts: 3,
             removeOnFail: true,
-            removeOnComplete: {
-                age: 10
-            }
+            removeOnComplete: true
         })
 
-        this.fileService.register(job.id!, job.data.videoPath)
+        this.fileLifecycle.insert(job.id!, job.data.videoPath)
         return job.id
     }
 

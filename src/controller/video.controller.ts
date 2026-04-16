@@ -4,15 +4,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { TranscriptionDataDto } from 'src/dto/transcription-data.dto';
 import { VideoService } from 'src/service/video.service';
 import { FileLifeCycleInterceptor } from 'src/interceptor/file-life-cycle.interceptor';
-import { FileLifeCycleService } from 'src/service/file-life-cycle.service';
+import { FileLifecycleService } from 'src/service/file-lifecycle.service';
 import { createReadStream } from 'node:fs';
-import { type Response } from 'express';
 
 @Controller('videos')
 export class VideoController {
     constructor(
         private readonly videoService: VideoService,
-        private fileService: FileLifeCycleService
+        private readonly fileLifecyle: FileLifecycleService
     ) { }
 
     @Post("subtitles")
@@ -43,7 +42,7 @@ export class VideoController {
         const stream = createReadStream(result.output);
 
         stream.on('end', async () => {
-            await this.fileService.cleanup(result.id!);
+            await this.fileLifecyle.delete(result.id!);
         });
 
         return new StreamableFile(stream, {

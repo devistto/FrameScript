@@ -3,11 +3,11 @@ import { VideoController } from "./controller/video.controller";
 import { VideoService } from "./service/video.service";
 import { TranscodeService } from "./service/transcode.service";
 import { BullModule } from "@nestjs/bullmq";
-import { ConsumerService } from "./service/consumer.service";
+import { VideoJobConsumer } from "./jobs/video-job-consumer";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { WebsocketService } from "./service/websocket.service";
-import { FileLifeCycleService } from "./service/file-life-cycle.service";
+import { FileLifecycleService } from "./service/file-lifecycle.service";
 import { AppService } from "./app.service";
 
 @Module({
@@ -27,8 +27,8 @@ import { AppService } from "./app.service";
     ],
     controllers: [VideoController],
     providers: [
-        VideoService, TranscodeService, ConsumerService,
-        WebsocketService, FileLifeCycleService, AppService
+        VideoService, TranscodeService, VideoJobConsumer,
+        WebsocketService, FileLifecycleService, AppService
     ]
 })
 
