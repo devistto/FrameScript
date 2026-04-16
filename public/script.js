@@ -110,6 +110,8 @@ function updateJobProgress(id, progress) {
     if (progress === 100) {
         state.current = 100;
         progressEl.textContent = `100%`;
+        bar.style.width = `${state.current}%`;
+
 
         const btn = job.querySelector('.cancel-btn');
 
@@ -143,9 +145,10 @@ function updateJobProgress(id, progress) {
         }
 
         state.current++;
+        console.log(state.current)
         progressEl.textContent = `${state.current}%`;
         bar.style.width = `${state.current}%`;
-    }, 350);
+    }, 300);
 
     progressEl.textContent = `${state.current}%`;
 

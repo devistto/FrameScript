@@ -17,6 +17,7 @@ export class VideoJobConsumer extends WorkerHost {
     }
 
     async process(job: Job): Promise<any> {
+        await job.updateProgress(0)
         const audioPath = await this.transcode.extractAudio(job.data.videoPath);
 
         await job.updateProgress(10)
