@@ -12,10 +12,14 @@ export class VideoService {
     ) { }
 
     async enqueue(videoPath: string, dto: TranscriptionDataDto) {
-        const job = await this.videoQueue.add("transcode", { ...dto, videoPath }, {
+        const job = await this.videoQueue.add("transcode", {
+            ...dto, videoPath
+        }, {
             attempts: 3,
             removeOnFail: true,
-            removeOnComplete: true
+            removeOnComplete: {
+                age: 300
+            }
         })
 
         this.fileLifecycle.insert(job.id!, job.data.videoPath)
@@ -42,6 +46,8 @@ export class VideoService {
 
     async findComplete(id: string) {
         const job = await this.videoQueue.getJob(id);
+
+        console.log(id, job)
 
         if (!job) throw new BadRequestException("Job process was not found.")
 

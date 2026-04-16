@@ -4,3 +4,4 @@ tmp
 .env
 dist/
 socket.io.min.js
+cache

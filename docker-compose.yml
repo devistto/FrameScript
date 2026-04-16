@@ -5,28 +5,29 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: backend
-    ports:
-      - 8000:8000
     depends_on:
       - whisper-asr
       - redis
+    ports:
+      - 8000:8000
     volumes:
       - .:/app
       - /app/node_modules
 
   whisper-asr:
-    environment:
-      - ASR_ENGINE=faster_whisper
-      - ASR_MODEL=large-v3
-      - ASR_DEVICE=cpu
-      - ASR_MODEL_PATH=/models
     image: onerahmet/openai-whisper-asr-webservice:latest
     container_name: whisper-asr
-    ports:
-      - 9000:9000
     expose:
       - 9000
+    environment:
+      - HF_HOME=/cache/huggingface
+      - TRANSFORMERS_CACHE=/cache/huggingface
+      - ASR_MODEL_PATH=/models
+      - ASR_ENGINE=faster_whisper
+      - ASR_MODE=large-v3
+
     volumes:
+      - ./cache:/cache
       - ./models:/models
 
   redis:
