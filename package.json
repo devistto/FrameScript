@@ -9,7 +9,7 @@
   "scripts": {
     "build": "nest build",
     "start:dev": "nest start --watch",
-    "postinstall": "copyfiles -u 3 node_modules/socket.io-client/dist/socket.io.min.js public/"
+    "prestart:dev": "cp node_modules/socket.io-client/dist/socket.io.min.js public/"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.4",

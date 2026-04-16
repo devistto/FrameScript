@@ -12,4 +12,4 @@ COPY . .
 
 RUN apk add --no-cache ttf-dejavu
 
-CMD [ "npm", "run", "start:dev" ]
+CMD ["npm", "run", "start:dev"]
