@@ -1,4 +1,4 @@
-## VideoCaptioner
+## FrameScript
 
 API focada na geração de vídeos com legendas precisas, utilizando o modelo Whisper para transcrição de áudio em texto e o FFmpeg para processamento de arquivos. O sistema implementa filas para o processamento assincrono de multiplas tarefas simultâneas, controle de execução, atualização e cancelamento em tempo real.
 
